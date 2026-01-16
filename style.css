@@ -1,0 +1,4 @@
+
+body{background:#0b1220;color:white;font-family:sans-serif;text-align:center}
+#map{position:relative;width:320px;height:320px;margin:auto}
+.tile{position:absolute;width:128px;height:128px;background-size:cover}
