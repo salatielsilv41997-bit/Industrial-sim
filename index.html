@@ -1,95 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang='pt-br'>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Industrial Simulation</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#020617">
-<style>
-:root{--bg:#0b1220;--panel:#111827;--line:#1f2937;--text:#e5e7eb;--muted:#9ca3af;--success:#16a34a}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui;background:linear-gradient(180deg,#0b1220,#020617);color:var(--text)}
-.header{padding:14px;text-align:center;font-weight:600;border-bottom:1px solid var(--line)}
-.container{max-width:420px;margin:auto;padding:12px}
-.scene{position:relative;height:200px;background:linear-gradient(#0f172a,#020617);border-radius:14px;overflow:hidden;margin-bottom:12px}
-.factory{position:absolute;left:16px;bottom:56px;width:70px;height:50px;background:#374151;border-radius:6px}
-.factory::after{content:"";position:absolute;right:8px;top:-22px;width:14px;height:22px;background:#4b5563}
-.smoke{position:absolute;right:10px;top:-10px;width:6px;height:6px;background:#9ca3af;border-radius:50%;animation:smoke 3s infinite}
-@keyframes smoke{to{transform:translateY(-20px);opacity:0}}
-.road{position:absolute;bottom:20px;width:100%;height:36px;background:#020617;border-top:1px solid var(--line)}
-.truck{position:absolute;bottom:24px;left:-80px;width:60px;height:22px;background:#1f2937;border-radius:4px;animation:drive 15s linear infinite}
-.truck::after{content:"";position:absolute;bottom:-6px;left:8px;width:10px;height:10px;background:#000;border-radius:50%;box-shadow:30px 0 #000}
-@keyframes drive{to{left:110%}}
-.panel{background:var(--panel);border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid var(--line)}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.progress{height:8px;background:#020617;border-radius:6px;overflow:hidden}
-.progress div{height:100%;background:var(--success);transition:.3s}
-button{width:100%;padding:10px;border:none;border-radius:10px;background:#1f2937;color:var(--text);margin-top:8px}
-.small{font-size:12px;color:var(--muted)}
-</style>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<title>Idle Farm</title>
+<link rel='stylesheet' href='css/style.css'>
 </head>
 <body>
-<div class="header">INDUSTRIAL SIMULATION</div>
-<div class="container">
-<div class="scene">
-  <div class="factory"><div class="smoke"></div></div>
-  <div class="road"></div>
-  <div class="truck"></div>
-</div>
-<div class="panel">
-<div class="stats">
-<div>Capital<br><b id="coins">0</b> $</div>
-<div>Produção<br><b id="pps">0</b>/s</div>
-<div>Eficiência<br><b id="eff">100%</b></div>
-<div>Nível<br><b id="level">1</b></div>
-</div>
-</div>
-<div class="panel">
-<b>Operação</b>
-<div class="progress"><div id="effBar"></div></div>
-<button onclick="optimize()">Ajustar processo</button>
-</div>
-<div class="panel">
-<b>Funcionários</b>
-<div>Ativos: <b id="workers">0</b></div>
-<button onclick="hire()">Contratar ($200)</button>
-</div>
-<div class="panel">
-<b>Contrato</b>
-<div class="small" id="contract"></div>
-<button onclick="completeContract()">Entregar produção</button>
-</div>
-</div>
-<script>
-let data = JSON.parse(localStorage.getItem("sim")) || {
-coins:0, eff:100, level:1, workers:0,
-contract:{goal:500,reward:300}
-};
-function production(){return data.level*(data.eff/100)+(data.workers*0.6)}
-function optimize(){data.eff=Math.min(120,data.eff+3)}
-function hire(){if(data.coins>=200){data.coins-=200;data.workers++}}
-function completeContract(){
- if(data.coins>=data.contract.goal){
-  data.coins+=data.contract.reward-data.contract.goal;
-  data.contract.goal=400+data.level*250;
-  data.contract.reward=Math.floor(data.contract.goal*0.6)
- }}
-function update(){
- data.coins+=production();
- data.eff=Math.max(85,data.eff-0.15);
- coins.innerText=Math.floor(data.coins);
- pps.innerText=production().toFixed(1);
- eff.innerText=data.eff.toFixed(0)+"%";
- level.innerText=data.level;
- workers.innerText=data.workers;
- effBar.style.width=(data.eff/1.2)+"%";
- contract.innerText=`Produzir $${data.contract.goal} → Ganho $${data.contract.reward}`;
- document.querySelector(".truck").style.animationDuration=Math.max(8,20-production()*2)+"s";
- localStorage.setItem("sim",JSON.stringify(data))
-}
-setInterval(update,1000);update();
-if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js")}
-</script>
+<h2>Idle Farm – Semi‑Realista</h2>
+<div id='map'></div>
+<script src='js/game.js'></script>
 </body>
 </html>
